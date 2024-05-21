@@ -27,18 +27,26 @@ class EncryptedRequest:
             self.data_dict[key] = secret_util.encrypt(f'"{value}"')
         self.url = url
         self.time = str(int(time.time()))
+        self.md5_sign = self.sign()
 
     def sign(self):
-        return hashlib.md5((self.time + json.dumps(self.data_dict)).encode('utf-8')).hexdigest()
+        s = self.time + json.dumps(self.data_dict).replace(" ", "")
+        sorted_s = list(s)
+        sorted_s.sort()
+        s = ""
+        for i in sorted_s:
+            s += i
+        return hashlib.md5(s.encode('utf-8')).hexdigest()
 
     def send(self):
-        response = requests.post(self.url, json=self.data_dict,
+        response = requests.post(self.url, data=json.dumps(self.data_dict).replace(' ', ''),
                                  headers={
                                      'Content-Type': 'application/json;charset=UTF-8',
                                      'appId': 'WdRunAndroid',
                                      'timeStamp': self.time,
-                                     'signature': self.sign(),
-                                     'tokenSign': 'com.wdax.pub.wxgzh'
+                                     'signature': self.md5_sign,
+                                     'tokenSign': 'e4edd60967ae7c5bfc087194c0971da7'
                                  })
         if response.status_code != 200:
-            raise UnparsableRequestException(response.status_code, response.text)
+            raise UnparsableRequestException(response.status_code, response.json())
+        return response.json()

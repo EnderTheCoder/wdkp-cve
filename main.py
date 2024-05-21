@@ -9,5 +9,12 @@
 import time
 from user_request import UserInfoRequest
 
-req = UserInfoRequest("18265156276")
-req.send()
+req = UserInfoRequest(input("phone number: "))
+res = req.send()
+if len(res['data']) > 0:
+    print("username: ", res['data'][0]['username'])
+    print("password: ", res['data'][0]['userdlmm'])
+    print("id: ", res['data'][0]['userid'])
+    print("full data: ", res['data'][0])
+else:
+    raise Exception("User with given phone number not found")
