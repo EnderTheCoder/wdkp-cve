@@ -2,7 +2,7 @@
 @Time: 2024/5/21 11:11
 @Auth: EnderTheCoder
 @Email: ggameinvader@gmail.com
-@File: get_user_info.py
+@File: secret.py
 @IDE: PyCharm
 @Motto：The only one true Legendary Grandmaster.
 """
