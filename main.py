@@ -8,7 +8,6 @@
 """
 import json
 import os.path
-import time
 from user_request import UserInfoRequest
 from run_request import GetUserRunRequest, InsertRunRequest, DeleteRunRequest
 from prettytable import PrettyTable
