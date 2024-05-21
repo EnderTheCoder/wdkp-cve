@@ -29,8 +29,4 @@ class SecretUtil:
         return unpad(decrypted_text, AES.block_size).decode('utf-8')
 
 
-# Example usage
-key = "12345678900000001234567890000000"
-iv = "1234567890000000"
-
-secret_util = SecretUtil(key, iv)
+secret_util = SecretUtil("12345678900000001234567890000000", "1234567890000000")
