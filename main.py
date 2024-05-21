@@ -20,7 +20,6 @@ if len(res['data']) > 0:
     print("用户名: ", res['data'][0]['username'])
     print("密码: ", res['data'][0]['userdlmm'])
     print("用户id: ", res['data'][0]['userid'])
-    print("full data: ", res['data'][0])
     user_id = res['data'][0]['userid']
 else:
     raise Exception("User with given phone number not found")
@@ -32,7 +31,6 @@ with open(user_path + f'/user.json', 'w') as f:
 while True:
     req = GetUserRunRequest(user_id)
     res = req.send()
-    print(res['data'])
     total_run_kilo = 0
     table = PrettyTable(['编号', '跑步id', '原始里程数（米）', '考核里程数（米）', '跑步步数', '开始时间', '是否有效'])
     run_records = res['data']
@@ -75,7 +73,17 @@ while True:
         print("删除成功")
         pass
     if option == 3:
-        target_phone = input('输入来源数据手机号码：')
+        phones = []
+        phone_table = PrettyTable(['编号', '手机号码'])
+        i = 0
+        for dir_name in os.listdir("data/"):
+            if os.path.exists(f'data/{dir_name}/run'):
+                phones.append(dir_name)
+                phone_table.add_row([i, dir_name])
+                i += 1
+        print("具有缓存数据的账号列表：")
+        print(phone_table)
+        target_phone = phones[int(input('输入来源数据手机号码编号：'))]
         if not os.path.exists(f"data/{target_phone}"):
             raise FileExistsError("Target phone dir does not exists.")
         run_path = f"data/{target_phone}/run"
