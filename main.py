@@ -13,6 +13,8 @@ from user_request import UserInfoRequest
 from run_request import GetUserRunRequest, InsertRunRequest, DeleteRunRequest
 from prettytable import PrettyTable
 
+if not os.path.exists('data'):
+    os.mkdir('data')
 phone = input("手机号码: ")
 req = UserInfoRequest(phone)
 res = req.send()
@@ -89,14 +91,16 @@ while True:
         i = 0
         target_records = []
         for json_file_name in os.listdir(run_path):
-            table = PrettyTable(['编号', '跑步id', '原始里程数（米）', '考核里程数（米）', '跑步步数', '开始时间', '是否有效'])
+            table = PrettyTable(
+                ['编号', '跑步id', '原始里程数（米）', '考核里程数（米）', '跑步步数', '开始时间', '是否有效'])
             with open(f'{run_path}/{json_file_name}') as f:
                 record = json.load(f)
                 if record['isquestion'] == 0:
                     is_question = '是'
                 else:
                     is_question = '否'
-                table.add_row([i, record['id'], record['gls'], record['khgls'], record['pbbs'], record['qssj'], is_question])
+                table.add_row(
+                    [i, record['id'], record['gls'], record['khgls'], record['pbbs'], record['qssj'], is_question])
                 target_records.append(record)
                 i += 1
         print(table)
