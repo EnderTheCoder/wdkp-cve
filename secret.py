@@ -7,7 +7,6 @@
 @Motto：The only one true Legendary Grandmaster.
 """
 
-import base64
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 
