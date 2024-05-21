@@ -7,5 +7,7 @@
 @Motto：The only one true Legendary Grandmaster.
 """
 import time
+from user_request import UserInfoRequest
 
-print(time.time())
+req = UserInfoRequest("18265156276")
+req.send()

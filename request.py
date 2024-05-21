@@ -15,6 +15,11 @@ import requests
 from secret import secret_util
 
 
+class UnparsableRequestException(Exception):
+    def __init__(self, code, message):
+        self.message = f"Request could not be parsed by remote sql gate, code:{code}, message:{message}"
+
+
 class EncryptedRequest:
     def __init__(self, data_dict: dict, url: str = 'http://wd.wdhl365.com:7700/App/Query'):
         self.data_dict = data_dict
@@ -35,4 +40,5 @@ class EncryptedRequest:
                                      'signature': self.sign(),
                                      'tokenSign': 'com.wdax.pub.wxgzh'
                                  })
-        pass
+        if response.status_code != 200:
+            raise UnparsableRequestException(response.status_code, response.text)
