@@ -50,3 +50,32 @@ class EncryptedRequest:
         if response.status_code != 200:
             raise UnparsableRequestException(response.status_code, response.json())
         return response.json()
+
+
+class InsertRequest(EncryptedRequest):
+    def __init__(self, data_dict: dict):
+        super().__init__(data_dict, 'http://wd.wdhl365.com:7702/App/Insert')
+
+
+class JsonInsertRequest(InsertRequest):
+    def __init__(self, obj: dict, table_name: str, modify_fields: dict = None, remove_fields: tuple[str] = ()):
+        data = {"SetCols": "", "tablename": table_name, "SetValue": ""}
+
+        def sqlize(val):
+            if isinstance(val, str):
+                return f"'{val}'"
+            if val is None:
+                return "null"
+            return str(val)
+
+        for k, v in obj.items():
+            if k not in remove_fields:
+                data['SetCols'] += k + ", "
+
+                if modify_fields is not None and k in modify_fields.keys():
+                    data['SetValue'] += sqlize(modify_fields[k]) + ", "
+                else:
+                    data['SetValue'] += sqlize(v) + ", "
+        data['SetCols'] = data['SetCols'][:-2]
+        data['SetValue'] = data['SetValue'][:-2]
+        super().__init__(data)
