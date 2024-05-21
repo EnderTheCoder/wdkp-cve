@@ -10,7 +10,7 @@ import json
 import os.path
 import time
 from user_request import UserInfoRequest
-from run_request import GetUserRunRequest, InsertRunRequest
+from run_request import GetUserRunRequest, InsertRunRequest, DeleteRunRequest
 from prettytable import PrettyTable
 
 phone = input("手机号码: ")
@@ -69,6 +69,10 @@ while True:
             print("文件被导出到：", export_path)
         pass
     if option == 2:
+        run_data_id = int(input("输入数据编号"))
+        req = DeleteRunRequest(run_records[run_data_id]['id'])
+        res = req.send()
+        print("删除成功")
         pass
     if option == 3:
         target_phone = input('输入来源数据手机号码：')
@@ -93,6 +97,7 @@ while True:
         target_record = target_records[run_option]
         req = InsertRunRequest(target_record, user_id)
         res = req.send()
+        print("插入成功")
         pass
     if option == 0:
         exit(0)

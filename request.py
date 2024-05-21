@@ -79,3 +79,8 @@ class JsonInsertRequest(InsertRequest):
         data['SetCols'] = data['SetCols'][:-2]
         data['SetValue'] = data['SetValue'][:-2]
         super().__init__(data)
+
+
+class DeleteRequest(EncryptedRequest):
+    def __init__(self, table_name: str, condition: str):
+        super().__init__({"tablename": table_name, "strwhere": condition}, "http://wd.wdhl365.com:7700/App/Delete")

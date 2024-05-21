@@ -8,7 +8,7 @@
 """
 import json
 
-from request import EncryptedRequest, JsonInsertRequest
+from request import EncryptedRequest, JsonInsertRequest, DeleteRequest
 
 
 class GetUserRunRequest(EncryptedRequest):
@@ -30,3 +30,8 @@ class InsertRunRequest(JsonInsertRequest):
             super().__init__(json_val, 'JYAC_HYT.dbo.Yd_CdPb ', {"yhid": user_id}, ('id',))
         else:
             raise Exception('Unsupported param type')
+
+
+class DeleteRunRequest(DeleteRequest):
+    def __init__(self, run_id: id):
+        super().__init__("JYAC_HYT.dbo.Yd_CdPb ", f"and id = {run_id}")
