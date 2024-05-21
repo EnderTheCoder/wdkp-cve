@@ -61,7 +61,7 @@ while True:
         run_path = user_path + '/run'
         if not os.path.exists(run_path):
             os.mkdir(run_path)
-        export_path = f'data/{phone}/run/{user_id}-{run_data["id"]}-{run_data["qssj"]}.json'.replace(' ', '_')
+        export_path = f'data/{phone}/run/{run_data["id"]}.json'.replace(' ', '_')
         with open(export_path, 'w') as f:
             json.dump(run_data, f)
             print("文件被导出到：", export_path)
