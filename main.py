@@ -45,7 +45,6 @@ while True:
 
         table.add_row(
             [i, record['id'], record['gls'], record['khgls'], record['pbbs'], record['qssj'], is_question])
-        print(record)
         i += 1
     print(f"找到共计{len(res['data'])}条记录，合法总里程数{total_run_kilo}米")
     print(table)
