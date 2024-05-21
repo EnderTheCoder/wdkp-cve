@@ -31,6 +31,7 @@ class EncryptedRequest:
     def sign(self):
         return hashlib.md5((self.time + json.dumps(self.data_dict)).encode('utf-8')).hexdigest()
 
+
     def send(self):
         response = requests.post(self.url, json=self.data_dict,
                                  headers={
