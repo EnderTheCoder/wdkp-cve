@@ -18,6 +18,7 @@ from secret import secret_util
 class UnparsableRequestException(Exception):
     def __init__(self, code, message):
         self.message = f"Request could not be parsed by remote sql gate, code:{code}, message:{message}"
+        self.message = message
 
 
 class EncryptedRequest:
@@ -28,6 +29,7 @@ class EncryptedRequest:
         self.url = url
         self.time = str(int(time.time()))
         self.md5_sign = self.sign()
+        self.response = None
 
     def sign(self):
         s = self.time + json.dumps(self.data_dict).replace(" ", "")
@@ -37,6 +39,10 @@ class EncryptedRequest:
         for i in sorted_s:
             s += i
         return hashlib.md5(s.encode('utf-8')).hexdigest()
+
+    def save_data(self, path):
+        with open(path, 'w') as f:
+            json.dump(self.response['data'], f)
 
     def send(self):
         response = requests.post(self.url, data=json.dumps(self.data_dict).replace(' ', ''),
@@ -49,7 +55,8 @@ class EncryptedRequest:
                                  })
         if response.status_code != 200:
             raise UnparsableRequestException(response.status_code, response.json())
-        return response.json()
+        self.response = response.json()
+        return self.response
 
 
 class InsertRequest(EncryptedRequest):
