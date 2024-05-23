@@ -1,5 +1,4 @@
 from sys_request import DumpTablesRequest, FetchTableRequest
-from prettytable import PrettyTable
 from util import dict_to_table
 res = DumpTablesRequest().send()
 table = dict_to_table(res['data'])
