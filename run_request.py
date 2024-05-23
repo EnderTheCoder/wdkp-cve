@@ -21,16 +21,6 @@ class GetUserRunRequest(EncryptedRequest):
         })
 
 
-class GetSpeedRequest(EncryptedRequest):
-    def __init__(self, userid: float):
-        super().__init__({
-            'uuid': 'wdrunandroid_134453',
-            'cols': '* ',
-            'tablename': 'JYAC_HYT.dbo.A_IFN_SportsRunning_Speed()',
-            'strwhere': f"and yhid='{userid}' and qssj > '2024-02-01'"
-        })
-
-
 class InsertRunRequest(JsonInsertRequest):
     def __init__(self, json_val, user_id: int):
         if isinstance(json_val, str):
