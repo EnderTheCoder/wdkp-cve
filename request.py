@@ -9,9 +9,11 @@
 import hashlib
 import json
 import time
+from datetime import datetime
 
 import requests
 
+import util
 from secret import secret_util
 from util import dict_to_table
 
@@ -82,10 +84,11 @@ class InsertRequest(EncryptedRequest):
 
 
 class JsonInsertRequest(InsertRequest):
-    def __init__(self, obj: dict, table_name: str, modify_fields: dict = None, remove_fields: tuple[str] = ()):
+    def __init__(self, obj: dict, table_name: str, modify_fields: dict = None, remove_fields: tuple[str] = (),
+                 time_fields: list[str] = None, timestamp_offset: int = None):
         data = {"SetCols": "", "tablename": table_name, "SetValue": ""}
-        self.time_fields: list[str] = []
-        self.time_offset = None
+        self.time_fields: list[str] = time_fields
+        self.time_offset: int = timestamp_offset
 
         def sqlize(val):
             if isinstance(val, str):
@@ -97,8 +100,7 @@ class JsonInsertRequest(InsertRequest):
         for k, v in obj.items():
             if k not in remove_fields:
                 if self.time_offset is not None and k in self.time_fields:
-                    # todo: implement time offset
-                    pass
+                    data[k] = util.offset_time(v, self.time_offset)
                 data['SetCols'] += k + ", "
                 if modify_fields is not None and k in modify_fields.keys():
                     data['SetValue'] += sqlize(modify_fields[k]) + ", "

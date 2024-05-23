@@ -8,6 +8,7 @@
 """
 import json
 import os.path
+from util import sql_time_to_timestamp
 from user_request import UserInfoRequest
 from run_request import GetUserRunRequest, InsertRunRequest, DeleteRunRequest, GetRunSectionRequest, \
     DeleteRunSectionRequest, InsertRunSectionRequest, GetLocationRequest, InsertLocationRequest, DeleteLocationRequest
@@ -131,18 +132,22 @@ while True:
         print(table)
         run_option = int(input("输入目标数据编号："))
         target_record = target_records[run_option]
-        req = InsertRunRequest(target_record, user_id)
+        target_time = input('输入开始跑步时间，格式YY:MM:DD hh:mm:ss')
+        target_timestamp = sql_time_to_timestamp(target_time)
+        base_timestamp = sql_time_to_timestamp(target_record['qssj'])
+        timestamp_offset = target_timestamp - base_timestamp
+        req = InsertRunRequest(target_record, user_id, timestamp_offset)
         req.send()
         print('跑步数据写入成功')
         with open(f"data/{target_phone}/run_section/{target_record['id']}.json") as f:
             sections = list(json.load(f))
             for section in sections:
-                InsertRunSectionRequest(dict(section), req.data_id()).send()
+                InsertRunSectionRequest(dict(section), req.data_id(), timestamp_offset).send()
         print('跑步区段数据写入成功')
         with open(f"data/{target_phone}/run_location/{target_record['id']}.json") as f:
             locations = list(json.load(f))
             for location in locations:
-                InsertLocationRequest(dict(location), user_id).send()
+                InsertLocationRequest(dict(location), user_id, timestamp_offset).send()
         print('位置关键点数据写入成功')
         print("插入成功")
         pass
