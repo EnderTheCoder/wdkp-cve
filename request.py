@@ -68,7 +68,10 @@ class EncryptedRequest:
 
 class InsertRequest(EncryptedRequest):
     def __init__(self, data_dict: dict):
-        super().__init__(data_dict, 'http://wd.wdhl365.com:7702/App/Insert')
+        super().__init__(data_dict, 'http://wd.wdhl365.com:7702/App/InsertID')
+
+    def data_id(self):
+        return self.response['data']
 
 
 class JsonInsertRequest(InsertRequest):

@@ -9,7 +9,8 @@
 import json
 import os.path
 from user_request import UserInfoRequest
-from run_request import GetUserRunRequest, InsertRunRequest, DeleteRunRequest
+from run_request import GetUserRunRequest, InsertRunRequest, DeleteRunRequest, GetRunSectionRequest, \
+    DeleteRunSectionRequest, InsertRunSectionRequest
 from prettytable import PrettyTable
 
 if not os.path.exists('data'):
@@ -59,18 +60,28 @@ while True:
         run_data_id = int(input("输入数据编号"))
         run_data = run_records[run_data_id]
         run_path = user_path + '/run'
+        run_section_path = user_path + '/run_section'
         if not os.path.exists(run_path):
             os.mkdir(run_path)
-        export_path = f'data/{phone}/run/{run_data["id"]}.json'.replace(' ', '_')
-        with open(export_path, 'w') as f:
-            json.dump(run_data, f)
-            print("文件被导出到：", export_path)
-        pass
+        if not os.path.exists(run_section_path):
+            os.mkdir(run_section_path)
+        section_req = GetRunSectionRequest(run_data['id'])
+        section_req.send()
+        section_req.print_table()
+        if input('是否确认写入[y/N]') == 'y':
+            section_req.save_data(f'data/{phone}/run_section/{run_data["id"]}.json')
+            export_path = f'data/{phone}/run/{run_data["id"]}.json'.replace(' ', '_')
+            with open(export_path, 'w') as f:
+                json.dump(run_data, f)
+                print("文件被导出到：", export_path)
+        else:
+            print('写入取消')
     if option == 2:
         run_data_id = int(input("输入数据编号"))
         req = DeleteRunRequest(run_records[run_data_id]['id'])
         res = req.send()
-        print("删除成功")
+        DeleteRunSectionRequest(run_records[run_data_id]['id']).send()
+        print('删除成功')
         pass
     if option == 3:
         phones = []
@@ -89,9 +100,9 @@ while True:
         run_path = f"data/{target_phone}/run"
         i = 0
         target_records = []
+        table = PrettyTable(
+            ['编号', '跑步id', '原始里程数（米）', '考核里程数（米）', '跑步步数', '开始时间', '是否有效'])
         for json_file_name in os.listdir(run_path):
-            table = PrettyTable(
-                ['编号', '跑步id', '原始里程数（米）', '考核里程数（米）', '跑步步数', '开始时间', '是否有效'])
             with open(f'{run_path}/{json_file_name}') as f:
                 record = json.load(f)
                 if record['isquestion'] == 0:
@@ -106,7 +117,11 @@ while True:
         run_option = int(input("输入目标数据编号："))
         target_record = target_records[run_option]
         req = InsertRunRequest(target_record, user_id)
-        res = req.send()
+        req.send()
+        with open(f"data/{target_phone}/run_section/{target_record['id']}.json") as f:
+            sections = list(json.load(f))
+            for section in sections:
+                InsertRunSectionRequest(dict(section), req.data_id()).send()
         print("插入成功")
         pass
     if option == 0:

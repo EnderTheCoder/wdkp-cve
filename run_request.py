@@ -69,5 +69,5 @@ class InsertRunSectionRequest(JsonInsertRequest):
 
 
 class DeleteRunSectionRequest(DeleteRequest):
-    def __init__(self, run_id: id):
+    def __init__(self, run_id: int):
         super().__init__("JYAC_HYT.dbo.Yd_CdPb_Section", f"and pbid = {run_id}")
