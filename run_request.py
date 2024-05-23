@@ -7,6 +7,7 @@
 @Motto：The only one true Legendary Grandmaster.
 """
 import json
+import random
 
 from request import EncryptedRequest, JsonInsertRequest, DeleteRequest
 
@@ -22,14 +23,18 @@ class GetUserRunRequest(EncryptedRequest):
 
 
 class InsertRunRequest(JsonInsertRequest):
-    def __init__(self, json_val, user_id: int, offset=None):
+    def __init__(self, json_val, user_id: int, random_offset=False, time_offset=None):
+        if random_offset:
+            json_val['pbbs'] += random.randrange(50, 200)
+            json_val['gls'] += random.randrange(50, 200)
+            json_val['hdgls'] = json_val['gls']
         if isinstance(json_val, str):
             with open(json_val) as f:
                 super().__init__(dict(json.load(f)), 'JYAC_HYT.dbo.Yd_CdPb ', {"yhid": user_id}, ('id',),
-                                 ['qssj', 'jssj', 'khjssj'], offset)
+                                 ['qssj', 'jssj', 'khjssj'], time_offset)
         elif isinstance(json_val, dict):
             super().__init__(json_val, 'JYAC_HYT.dbo.Yd_CdPb ', {"yhid": user_id}, ('id',), ['qssj', 'jssj', 'khjssj'],
-                             offset)
+                             time_offset)
         else:
             raise Exception('Unsupported param type')
 

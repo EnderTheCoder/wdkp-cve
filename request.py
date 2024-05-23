@@ -10,6 +10,7 @@ import hashlib
 import json
 import time
 from datetime import datetime
+from threading import Thread
 
 import requests
 
@@ -68,6 +69,9 @@ class EncryptedRequest:
         self.response = response.json()
         return self.response
 
+    def send_async(self):
+        Thread(target=self.send).start()
+
     def print_table(self):
         print(dict_to_table(self.response['data']))
 
@@ -100,7 +104,7 @@ class JsonInsertRequest(InsertRequest):
         for k, v in obj.items():
             if k not in remove_fields:
                 if self.time_offset is not None and k in self.time_fields:
-                    data[k] = util.offset_time(v, self.time_offset)
+                    v = util.offset_time(v, self.time_offset)
                 data['SetCols'] += k + ", "
                 if modify_fields is not None and k in modify_fields.keys():
                     data['SetValue'] += sqlize(modify_fields[k]) + ", "
