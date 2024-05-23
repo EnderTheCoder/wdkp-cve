@@ -145,5 +145,6 @@ while True:
         print("插入成功")
         pass
     if option == 0:
+        print('主程序退出')
         exit(0)
         pass
