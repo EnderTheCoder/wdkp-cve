@@ -10,7 +10,7 @@ import json
 import os.path
 from user_request import UserInfoRequest
 from run_request import GetUserRunRequest, InsertRunRequest, DeleteRunRequest, GetRunSectionRequest, \
-    DeleteRunSectionRequest, InsertRunSectionRequest
+    DeleteRunSectionRequest, InsertRunSectionRequest, GetLocationRequest, InsertLocationRequest, DeleteLocationRequest
 from prettytable import PrettyTable
 
 if not os.path.exists('data'):
@@ -61,16 +61,25 @@ while True:
         run_data = run_records[run_data_id]
         run_path = user_path + '/run'
         run_section_path = user_path + '/run_section'
+        run_location_path = user_path + '/run_location'
         if not os.path.exists(run_path):
             os.mkdir(run_path)
         if not os.path.exists(run_section_path):
             os.mkdir(run_section_path)
+        if not os.path.exists(run_location_path):
+            os.mkdir(run_location_path)
         section_req = GetRunSectionRequest(run_data['id'])
         section_req.send()
+        print('跑步数据详情：')
         section_req.print_table()
-        if input('是否确认写入[y/N]') == 'y':
+        location_req = GetLocationRequest(user_id, run_data['qssj'], run_data['jssj'])
+        location_req.send()
+        print(f'含有位置记录点{len(location_req.data())}个')
+        # location_req.print_table()
+        if input('\t是否确认写入[y/N]') == 'y':
             section_req.save_data(f'data/{phone}/run_section/{run_data["id"]}.json')
-            export_path = f'data/{phone}/run/{run_data["id"]}.json'.replace(' ', '_')
+            location_req.save_data(f'data/{phone}/run_location/{run_data["id"]}.json')
+            export_path = f'data/{phone}/run/{run_data["id"]}.json'
             with open(export_path, 'w') as f:
                 json.dump(run_data, f)
                 print("文件被导出到：", export_path)
@@ -78,10 +87,14 @@ while True:
             print('写入取消')
     if option == 2:
         run_data_id = int(input("输入数据编号"))
-        req = DeleteRunRequest(run_records[run_data_id]['id'])
-        res = req.send()
-        DeleteRunSectionRequest(run_records[run_data_id]['id']).send()
-        print('删除成功')
+        if input("\t是否确认删除[y/N]") == 'y':
+            req = DeleteRunRequest(run_records[run_data_id]['id'])
+            res = req.send()
+            DeleteRunSectionRequest(run_records[run_data_id]['id']).send()
+            DeleteLocationRequest(user_id, run_records[run_data_id]['qssj'], run_records[run_data_id]['jssj']).send()
+            print('删除成功')
+        else:
+            print('删除取消')
         pass
     if option == 3:
         phones = []
@@ -118,10 +131,17 @@ while True:
         target_record = target_records[run_option]
         req = InsertRunRequest(target_record, user_id)
         req.send()
+        print('跑步数据写入成功')
         with open(f"data/{target_phone}/run_section/{target_record['id']}.json") as f:
             sections = list(json.load(f))
             for section in sections:
                 InsertRunSectionRequest(dict(section), req.data_id()).send()
+        print('跑步区段数据写入成功')
+        with open(f"data/{target_phone}/run_location/{target_record['id']}.json") as f:
+            locations = list(json.load(f))
+            for location in locations:
+                InsertLocationRequest(dict(location), user_id).send()
+        print('位置关键点数据写入成功')
         print("插入成功")
         pass
     if option == 0:

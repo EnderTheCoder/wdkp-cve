@@ -48,7 +48,11 @@ class EncryptedRequest:
             else:
                 json.dump(self.response['data'][index], f)
 
+    def pre_send(self):
+        pass
+
     def send(self):
+        self.pre_send()
         response = requests.post(self.url, data=json.dumps(self.data_dict).replace(' ', ''),
                                  headers={
                                      'Content-Type': 'application/json;charset=UTF-8',
@@ -65,6 +69,9 @@ class EncryptedRequest:
     def print_table(self):
         print(dict_to_table(self.response['data']))
 
+    def data(self):
+        return self.response['data']
+
 
 class InsertRequest(EncryptedRequest):
     def __init__(self, data_dict: dict):
@@ -77,6 +84,8 @@ class InsertRequest(EncryptedRequest):
 class JsonInsertRequest(InsertRequest):
     def __init__(self, obj: dict, table_name: str, modify_fields: dict = None, remove_fields: tuple[str] = ()):
         data = {"SetCols": "", "tablename": table_name, "SetValue": ""}
+        self.time_fields: list[str] = []
+        self.time_offset = None
 
         def sqlize(val):
             if isinstance(val, str):
@@ -87,8 +96,10 @@ class JsonInsertRequest(InsertRequest):
 
         for k, v in obj.items():
             if k not in remove_fields:
+                if self.time_offset is not None and k in self.time_fields:
+                    # todo: implement time offset
+                    pass
                 data['SetCols'] += k + ", "
-
                 if modify_fields is not None and k in modify_fields.keys():
                     data['SetValue'] += sqlize(modify_fields[k]) + ", "
                 else:

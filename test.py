@@ -6,7 +6,5 @@
 @IDE: PyCharm
 @Motto：The only one true Legendary Grandmaster.
 """
-from run_request import GetLocationRequest
-req = GetLocationRequest(954532.0, '2024-01-01', '2024-05-01')
-res = req.send()
-req.print_table()
+import time
+from datetime import datetime
