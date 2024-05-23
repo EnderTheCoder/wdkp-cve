@@ -8,4 +8,4 @@
 """
 from secret import secret_util
 
-print(secret_util.decrypt(input('ciphertext: ')))
+print("plaintext:", secret_util.decrypt(input('ciphertext: ')))
