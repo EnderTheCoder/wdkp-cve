@@ -16,6 +16,8 @@ from prettytable import PrettyTable
 if not os.path.exists('data'):
     os.mkdir('data')
 phone = input("手机号码: ")
+if len(phone) != 11 or phone[0] != '1' or not phone.isdigit():
+    raise Exception("Invalid phone number format")
 req = UserInfoRequest(phone)
 res = req.send()
 if len(res['data']) > 0:
