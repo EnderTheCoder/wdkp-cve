@@ -6,7 +6,7 @@
 @IDE: PyCharm
 @Motto：The only one true Legendary Grandmaster.
 """
-from run_request import GetRunSectionRequest
-req = GetRunSectionRequest(6813304.0)
+from run_request import GetLocationRequest
+req = GetLocationRequest(954532.0, '2024-01-01', '2024-05-01')
 res = req.send()
 req.print_table()

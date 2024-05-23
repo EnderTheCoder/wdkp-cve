@@ -71,3 +71,31 @@ class InsertRunSectionRequest(JsonInsertRequest):
 class DeleteRunSectionRequest(DeleteRequest):
     def __init__(self, run_id: int):
         super().__init__("JYAC_HYT.dbo.Yd_CdPb_Section", f"and pbid = {run_id}")
+
+
+class GetLocationRequest(EncryptedRequest):
+    def __init__(self, user_id: float, begin_time: str, end_time: str):
+        super().__init__({
+            'uuid': 'wdrunandroid_0',
+            'cols': '* ',
+            'tablename': f'[WDHL_USER_LSGJ].[dbo].HIS_USER_{int(user_id)}',
+            'strwhere': f" and sj between '{begin_time}' and '{end_time}'"
+        })
+
+
+class DeleteLocationRequest(DeleteRequest):
+    def __init__(self, user_id: float, begin_time: str, end_time: str):
+        super().__init__(f'[WDHL_USER_LSGJ].[dbo].HIS_USER_{int(user_id)}',
+                         f" and sj between '{begin_time}' and '{end_time}'")
+
+
+class InsertLocationRequest(JsonInsertRequest):
+    def __init__(self, json_val, user_id: float):
+        table_name = f'[WDHL_USER_LSGJ].[dbo].HIS_USER_{int(user_id)}'
+        if isinstance(json_val, str):
+            with open(json_val) as f:
+                super().__init__(dict(json.load(f)), table_name, {"cjh": int(user_id)}, ('lsdwid',))
+        elif isinstance(json_val, dict):
+            super().__init__(json_val, table_name, {"cjh": int(user_id)}, ('lsdwid',))
+        else:
+            raise Exception('Unsupported param type')
