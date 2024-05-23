@@ -6,8 +6,14 @@
 @IDE: PyCharm
 @Motto：The only one true Legendary Grandmaster.
 """
-from sys_request import DumpAdminUser
+from sys_request import TestDumpTable, DumpRunAdminUser
 
-req = DumpAdminUser()
+# req = DumpBizAdminUser()
+# req.send()
+# req.save_data('sys/admin_user/biz_all.json')
+# req.print_table()
+
+req = DumpRunAdminUser()
 req.send()
-req.save_data('sys/admin_user/all.json')
+req.save_data('sys/admin_user/test_all_2.json')
+req.print_table()

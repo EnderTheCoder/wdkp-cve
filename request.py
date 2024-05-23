@@ -13,6 +13,7 @@ import time
 import requests
 
 from secret import secret_util
+from util import dict_to_table
 
 
 class UnparsableRequestException(Exception):
@@ -40,9 +41,12 @@ class EncryptedRequest:
             s += i
         return hashlib.md5(s.encode('utf-8')).hexdigest()
 
-    def save_data(self, path):
+    def save_data(self, path, index: int = None):
         with open(path, 'w') as f:
-            json.dump(self.response['data'], f)
+            if index is None:
+                json.dump(self.response['data'], f)
+            else:
+                json.dump(self.response['data'][index], f)
 
     def send(self):
         response = requests.post(self.url, data=json.dumps(self.data_dict).replace(' ', ''),
@@ -57,6 +61,9 @@ class EncryptedRequest:
             raise UnparsableRequestException(response.status_code, response.json())
         self.response = response.json()
         return self.response
+
+    def print_table(self):
+        print(dict_to_table(self.response['data']))
 
 
 class InsertRequest(EncryptedRequest):

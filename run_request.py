@@ -45,3 +45,29 @@ class InsertRunRequest(JsonInsertRequest):
 class DeleteRunRequest(DeleteRequest):
     def __init__(self, run_id: id):
         super().__init__("JYAC_HYT.dbo.Yd_CdPb ", f"and id = {run_id}")
+
+
+class GetRunSectionRequest(EncryptedRequest):
+    def __init__(self, run_id: id):
+        super().__init__({
+            'uuid': 'wdrunandroid_0',
+            'cols': '* ',
+            'tablename': 'JYAC_HYT.dbo.Yd_CdPb_Section',
+            'strwhere': f"and pbid={run_id}"
+        })
+
+
+class InsertRunSectionRequest(JsonInsertRequest):
+    def __init__(self, json_val, run_id: int):
+        if isinstance(json_val, str):
+            with open(json_val) as f:
+                super().__init__(dict(json.load(f)), 'JYAC_HYT.dbo.Yd_CdPb_Section', {"pbid": run_id}, ('id',))
+        elif isinstance(json_val, dict):
+            super().__init__(json_val, 'JYAC_HYT.dbo.Yd_CdPb_Section', {"pbid": run_id}, ('id',))
+        else:
+            raise Exception('Unsupported param type')
+
+
+class DeleteRunSectionRequest(DeleteRequest):
+    def __init__(self, run_id: id):
+        super().__init__("JYAC_HYT.dbo.Yd_CdPb_Section", f"and pbid = {run_id}")

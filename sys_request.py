@@ -29,10 +29,29 @@ class FetchTableRequest(EncryptedRequest):
         })
 
 
-class DumpAdminUser(EncryptedRequest):
+class DumpBizAdminUser(EncryptedRequest):
     def __init__(self):
         super().__init__({
             'uuid': 'wdrunandroid_134453',
             'cols': 'top 100 *',
             'tablename': 'T_Sys_User',
+        })
+
+
+class DumpRunAdminUser(EncryptedRequest):
+    def __init__(self):
+        super().__init__({
+            'uuid': 'wdrunandroid_134453',
+            'cols': 'top 100 *',
+            'tablename': 'User_Info',
+            'strwhere': 'and teachername IS NOT NULL'
+        })
+
+
+class TestDumpTable(EncryptedRequest):
+    def __init__(self, table_name):
+        super().__init__({
+            'uuid': 'wdrunandroid_134453',
+            'cols': 'top 100 *',
+            'tablename': table_name,
         })
