@@ -40,6 +40,7 @@ class InsertRunRequest(JsonInsertRequest):
             super().__init__(json_val, 'JYAC_HYT.dbo.Yd_CdPb ', {"yhid": user_id}, ('id',))
         else:
             raise Exception('Unsupported param type')
+        self.time_fields = ['qssj', 'jssj', 'khjssj']
 
 
 class DeleteRunRequest(DeleteRequest):
@@ -66,6 +67,7 @@ class InsertRunSectionRequest(JsonInsertRequest):
             super().__init__(json_val, 'JYAC_HYT.dbo.Yd_CdPb_Section', {"pbid": run_id}, ('id',))
         else:
             raise Exception('Unsupported param type')
+        self.time_fields = ['rtime']
 
 
 class DeleteRunSectionRequest(DeleteRequest):
@@ -99,3 +101,4 @@ class InsertLocationRequest(JsonInsertRequest):
             super().__init__(json_val, table_name, {"cjh": int(user_id)}, ('lsdwid',))
         else:
             raise Exception('Unsupported param type')
+        self.time_fields = ['sj']
