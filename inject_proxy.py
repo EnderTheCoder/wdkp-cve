@@ -6,7 +6,7 @@
 @IDE: PyCharm
 @Motto：The only one true Legendary Grandmaster.
 """
-from flask import Flask, render_template, request
+from flask import Flask, request
 
 from request import UnparsableRequestException
 from sys_request import FetchTableRequest
