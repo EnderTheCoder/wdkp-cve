@@ -10,7 +10,7 @@ import json
 import random
 
 from request import EncryptedRequest, JsonInsertRequest, DeleteRequest
-
+from util import offset_time
 
 class GetUserRunRequest(EncryptedRequest):
     def __init__(self, userid: float):
@@ -31,6 +31,8 @@ class InsertRunRequest(JsonInsertRequest):
             json_val['hdgls'] = json_val['gls']
             json_val['kcal'] += json_val['kcal'] * random.random() * 0.1
             json_val['khkcal'] = json_val['kcal']
+            json_val['jssj'] = offset_time(json_val['jssj'], random.randrange(0, 200))
+            json_val['khjssj'] = offset_time(json_val['khjssj'], random.randrange(0, 200))
         if isinstance(json_val, str):
             with open(json_val) as f:
                 super().__init__(dict(json.load(f)), 'JYAC_HYT.dbo.Yd_CdPb ', {"yhid": user_id}, ('id',),
