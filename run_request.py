@@ -28,6 +28,9 @@ class InsertRunRequest(JsonInsertRequest):
             json_val['pbbs'] += random.randrange(50, 200)
             json_val['gls'] += random.randrange(50, 200)
             json_val['hdgls'] = json_val['gls']
+            json_val['hdgls'] = json_val['gls']
+            json_val['kcal'] += json_val['kcal'] * random.random() * 0.1
+            json_val['khkcal'] = json_val['kcal']
         if isinstance(json_val, str):
             with open(json_val) as f:
                 super().__init__(dict(json.load(f)), 'JYAC_HYT.dbo.Yd_CdPb ', {"yhid": user_id}, ('id',),
