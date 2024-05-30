@@ -8,6 +8,8 @@
 """
 import json
 import os.path
+import random
+
 from util import sql_time_to_timestamp
 from user_request import UserInfoRequest
 from run_request import GetUserRunRequest, InsertRunRequest, DeleteRunRequest, GetRunSectionRequest, \
@@ -132,7 +134,12 @@ while True:
         print(table)
         run_option = int(input("输入目标数据编号："))
         target_record = target_records[run_option]
-        target_time = input('输入开始跑步时间，格式YY-MM-DD hh:mm:ss')
+        target_time = input('输入开始跑步日期，格式YY-MM-DD')
+        target_time_tail = input("输入跑步时间，格式hh:mm:ss（默认随机八点钟）")
+        if target_time_tail == '':
+            target_time_tail = f'08:{random.randrange(0, 30)}:{random.randrange(0, 59)}'
+            print('使用随机时间', target_time_tail)
+        target_time += ' ' + target_time_tail
         target_timestamp = sql_time_to_timestamp(target_time)
         base_timestamp = sql_time_to_timestamp(target_record['qssj'])
         timestamp_offset = target_timestamp - base_timestamp
