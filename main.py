@@ -154,7 +154,7 @@ while True:
         with open(f"data/{target_phone}/run_location/{target_record['id']}.json") as f:
             locations = list(json.load(f))
             for location in locations:
-                InsertLocationRequest(dict(location), user_id, timestamp_offset).send_async()
+                InsertLocationRequest(dict(location), user_id, timestamp_offset).send()
         print('位置关键点数据写入成功')
         print("插入成功")
         pass
