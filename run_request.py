@@ -12,6 +12,7 @@ import random
 from request import EncryptedRequest, JsonInsertRequest, DeleteRequest
 from util import offset_time
 
+
 class GetUserRunRequest(EncryptedRequest):
     def __init__(self, userid: float):
         super().__init__({
