@@ -10,6 +10,8 @@ import json
 import os.path
 import random
 
+from tqdm import tqdm
+
 from util import sql_time_to_timestamp
 from user_request import UserInfoRequest
 from run_request import GetUserRunRequest, InsertRunRequest, DeleteRunRequest, GetRunSectionRequest, \
@@ -148,12 +150,12 @@ while True:
         print('跑步数据写入成功')
         with open(f"data/{target_phone}/run_section/{target_record['id']}.json") as f:
             sections = list(json.load(f))
-            for section in sections:
+            for section in tqdm(sections, '正在写入跑步区段数据'):
                 InsertRunSectionRequest(dict(section), req.data_id(), timestamp_offset).send()
         print('跑步区段数据写入成功')
         with open(f"data/{target_phone}/run_location/{target_record['id']}.json") as f:
             locations = list(json.load(f))
-            for location in locations:
+            for location in tqdm(locations, '正在写入位置关键点数据'):
                 InsertLocationRequest(dict(location), user_id, timestamp_offset).send()
         print('位置关键点数据写入成功')
         print("插入成功")
