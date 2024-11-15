@@ -51,9 +51,9 @@ while True:
         if record['isquestion'] == 0:
             total_run_kilo += record['khgls']
         if record['isquestion'] == 0:
-            is_question = '是'
+            is_question = 'YES'
         else:
-            is_question = '否'
+            is_question = 'NO'
 
         table.add_row(
             [i, record['id'], record['gls'], record['khgls'], record['pbbs'], record['qssj'], is_question,
@@ -135,9 +135,9 @@ while True:
             with open(f'{run_path}/{json_file_name}') as f:
                 record = json.load(f)
                 if record['isquestion'] == 0:
-                    is_question = '是'
+                    is_question = 'YES'
                 else:
-                    is_question = '否'
+                    is_question = 'NO'
                 table.add_row(
                     [i, record['id'], record['gls'], record['khgls'], record['pbbs'], record['qssj'], is_question,
                      record['phoneno'], record['version']])
