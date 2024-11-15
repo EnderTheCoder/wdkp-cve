@@ -59,6 +59,8 @@ while True:
         i += 1
     print(f"找到共计{len(res['data'])}条记录，合法总里程数{total_run_kilo}米")
     print(table)
+    print('当前设置的app版本号：', app_version)
+    print('当前设置的手机序列号：', phone_serial)
     print("*执行操作：")
     print("\t1. 下载数据")
     print("\t2. 删除数据")
