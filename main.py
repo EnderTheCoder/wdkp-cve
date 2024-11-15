@@ -43,7 +43,8 @@ while True:
     req = GetUserRunRequest(user_id)
     res = req.send()
     total_run_kilo = 0
-    table = PrettyTable(['编号', '跑步id', '原始里程数（米）', '考核里程数（米）', '跑步步数', '开始时间', '是否有效', '序列号'])
+    table = PrettyTable(
+        ['编号', '跑步id', '原始里程数（米）', '考核里程数（米）', '跑步步数', '开始时间', '是否有效', '序列号', '版本号'])
     run_records = res['data']
     i = 0
     for record in run_records:
@@ -55,7 +56,8 @@ while True:
             is_question = '否'
 
         table.add_row(
-            [i, record['id'], record['gls'], record['khgls'], record['pbbs'], record['qssj'], is_question, record['phoneno']])
+            [i, record['id'], record['gls'], record['khgls'], record['pbbs'], record['qssj'], is_question,
+             record['phoneno'], record['version']])
         i += 1
     print(f"找到共计{len(res['data'])}条记录，合法总里程数{total_run_kilo}米")
     print(table)
@@ -127,7 +129,8 @@ while True:
         i = 0
         target_records = []
         table = PrettyTable(
-            ['编号', '跑步id', '原始里程数（米）', '考核里程数（米）', '跑步步数', '开始时间', '是否有效'])
+            ['编号', '跑步id', '原始里程数（米）', '考核里程数（米）', '跑步步数', '开始时间', '是否有效', '序列号',
+             '版本号'])
         for json_file_name in os.listdir(run_path):
             with open(f'{run_path}/{json_file_name}') as f:
                 record = json.load(f)
@@ -136,13 +139,14 @@ while True:
                 else:
                     is_question = '否'
                 table.add_row(
-                    [i, record['id'], record['gls'], record['khgls'], record['pbbs'], record['qssj'], is_question])
+                    [i, record['id'], record['gls'], record['khgls'], record['pbbs'], record['qssj'], is_question,
+                     record['phoneno'], record['version']])
                 target_records.append(record)
                 i += 1
         print(table)
         run_option = int(input("输入目标数据编号："))
         target_record = target_records[run_option]
-        target_time = input('输入开始跑步日期，格式YY-MM-DD：')
+        target_time = input('输入开始跑步日期，格式YYYY-MM-DD：')
         target_time_tail = input("输入跑步时间，格式hh:mm:ss（默认随机八点钟）：")
         if target_time_tail == '':
             target_time_tail = f'08:{random.randrange(0, 30)}:{random.randrange(0, 59)}'
@@ -174,7 +178,7 @@ while True:
         phone_serial = input("输入手机序列号：")
         pass
     if option == 5:
-        app_version = input("输入app版本号（苹果手机的型号包含在版本号中）：")
+        app_version = input("输入app版本号（苹果手机的型号包含在版本号中，示例：iPhone15,4|17.4.1|1.71）：")
         pass
     if option == 0:
         print('主程序退出')

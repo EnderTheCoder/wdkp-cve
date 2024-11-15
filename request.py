@@ -65,7 +65,7 @@ class EncryptedRequest:
                                      'tokenSign': 'e4edd60967ae7c5bfc087194c0971da7'
                                  })
         if response.status_code != 200:
-            raise UnparsableRequestException(response.status_code, response.json())
+            raise UnparsableRequestException(response.status_code, response.content)
         self.response = response.json()
         return self.response
 
