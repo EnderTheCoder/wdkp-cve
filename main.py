@@ -12,6 +12,7 @@ import random
 
 from tqdm import tqdm
 
+from request import UnparsableRequestException
 from util import sql_time_to_timestamp
 from user_request import UserInfoRequest
 from run_request import GetUserRunRequest, InsertRunRequest, DeleteRunRequest, GetRunSectionRequest, \
@@ -170,7 +171,15 @@ while True:
         with open(f"data/{target_phone}/run_location/{target_record['id']}.json") as f:
             locations = list(json.load(f))
             for location in tqdm(locations, '正在写入位置关键点数据'):
-                InsertLocationRequest(dict(location), user_id, timestamp_offset).send()
+                fail_cnt = 0
+                try:
+                    InsertLocationRequest(dict(location), user_id, timestamp_offset).send()
+                except UnparsableRequestException:
+                    fail_cnt += 1
+                    print('警告：一项位置关键点数据写入失败')
+                    if fail_cnt >= 5:
+                        print('错误：失败超过5次，终止写入')
+                        break
         print('位置关键点数据写入成功')
         print("插入成功")
         pass
