@@ -147,49 +147,81 @@ while True:
         print(table)
         run_option = int(input("输入目标数据编号："))
         target_record = target_records[run_option]
-        target_time = input('输入开始跑步日期，格式YYYY-MM-DD：')
+        target_time_head = input('输入开始跑步日期，格式YYYY-MM-DD：')
         target_time_tail = input("输入跑步时间，格式hh:mm:ss（默认随机八点钟）：")
-        if target_time_tail == '':
-            target_time_tail = f'08:{random.randrange(0, 30)}:{random.randrange(0, 59)}'
-            print('使用随机时间', target_time_tail)
-        target_time += ' ' + target_time_tail
-        target_timestamp = sql_time_to_timestamp(target_time)
-        base_timestamp = sql_time_to_timestamp(target_record['qssj'])
-        timestamp_offset = target_timestamp - base_timestamp
+
         if app_version is not None:
             target_record['version'] = app_version
         if phone_serial is not None:
             target_record['phoneno'] = phone_serial
-        req = InsertRunRequest(target_record, user_id, True, timestamp_offset)
-        req.send()
-        print('跑步数据写入成功')
-        with open(f"data/{target_phone}/run_section/{target_record['id']}.json") as f:
-            sections = list(json.load(f))
-            for section in tqdm(sections, '正在写入跑步区段数据'):
-                InsertRunSectionRequest(dict(section), req.data_id(), timestamp_offset).send()
-        print('跑步区段数据写入成功')
-        with open(f"data/{target_phone}/run_location/{target_record['id']}.json") as f:
-            locations = list(json.load(f))
-            for location in tqdm(locations, '正在写入位置关键点数据'):
-                fail_cnt = 0
-                try:
-                    InsertLocationRequest(dict(location), user_id, timestamp_offset).send()
-                except UnparsableRequestException:
-                    fail_cnt += 1
-                    print('警告：一项位置关键点数据写入失败')
-                    if fail_cnt >= 5:
-                        print('错误：失败超过5次，终止写入')
-                        break
-        print('位置关键点数据写入成功')
-        print("插入成功")
-        pass
+        req_list = []
+        dup = input('重复天数（默认1，不得小于1）：')
+        if dup == '':
+            print('使用默认值：1')
+            dup = 1
+        else:
+            dup = int(dup)
+
+        pbar = tqdm(range(dup))
+        for run_idx in pbar:
+            flag_random_time_tail = False
+            if target_time_tail == '':
+                flag_random_time_tail = True
+                target_time_tail = f'08:{random.randrange(0, 30)}:{random.randrange(0, 59)}'
+            target_time_full = target_time_head+' ' + target_time_tail
+            target_timestamp = sql_time_to_timestamp(target_time_full) + run_idx * 24 * 60 * 60
+            base_timestamp = sql_time_to_timestamp(target_record['qssj'])
+            timestamp_offset = target_timestamp - base_timestamp
+            pbar.set_description('写入跑步数据')
+            run_req = InsertRunRequest(target_record, user_id, True, timestamp_offset)
+            run_req.send()
+            with open(f"data/{target_phone}/run_section/{target_record['id']}.json") as f:
+                sections = list(json.load(f))
+                for s_idx, section in enumerate(sections):
+                    pbar.set_description(f'写入跑步区段数据{s_idx}/{len(sections)}')
+                    InsertRunSectionRequest(dict(section), run_req.data_id(), timestamp_offset).send()
+            with open(f"data/{target_phone}/run_location/{target_record['id']}.json") as f:
+                locations = list(json.load(f))
+                for l_idx, location in enumerate(locations):
+                    fail_cnt = 0
+                    try:
+                        pbar.set_description(f'写入位置关键点数据{l_idx}/{len(locations)}')
+                        InsertLocationRequest(dict(location), user_id, timestamp_offset).send()
+                    except UnparsableRequestException:
+                        fail_cnt += 1
+                        print('警告：一项位置关键点数据写入失败')
+                        if fail_cnt >= 5:
+                            print('错误：失败超过5次，终止写入')
+                            break
+            if flag_random_time_tail:
+                target_time_tail = ''
+        # fail_cnt = 0
+        # pbar = tqdm(req_list)
+        # for req in pbar:
+        #     s = ''
+        #     if isinstance(req, InsertRunRequest):
+        #         s = '写入跑步数据'
+        #     if isinstance(req, InsertRunSectionRequest):
+        #         s = '写入跑步区段数据'
+        #     if isinstance(req, InsertLocationRequest):
+        #         s = '写入位置关键点数据'
+        #     pbar.set_description(s)
+        #     try:
+        #         req.send()
+        #
+        #     except UnparsableRequestException:
+        #         if isinstance(req, InsertRunRequest) or isinstance(req, InsertRunSectionRequest):
+        #             print('致命错误：写入跑步数据或跑步区段数据失败')
+        #             break
+        #         fail_cnt += 1
+        #         print('警告：一项位置关键点数据写入失败')
+        #         if fail_cnt >= 5:
+        #             print('致命错误：失败超过5次，终止写入')
+        #             break
     if option == 4:
         phone_serial = input("输入手机序列号：")
-        pass
     if option == 5:
         app_version = input("输入app版本号（苹果手机的型号包含在版本号中，示例：iPhone15,4|17.4.1|1.71）：")
-        pass
     if option == 0:
         print('主程序退出')
         exit(0)
-        pass

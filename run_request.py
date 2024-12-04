@@ -11,7 +11,7 @@ import random
 
 from request import EncryptedRequest, JsonInsertRequest, DeleteRequest
 from util import offset_time
-
+from copy import deepcopy
 
 class GetUserRunRequest(EncryptedRequest):
     def __init__(self, userid: float):
@@ -25,6 +25,7 @@ class GetUserRunRequest(EncryptedRequest):
 
 class InsertRunRequest(JsonInsertRequest):
     def __init__(self, json_val, user_id: int, random_offset=False, time_offset=None):
+        json_val = deepcopy(json_val)
         if random_offset:
             json_val['pbbs'] += random.randrange(50, 200)
             json_val['gls'] += random.randrange(50, 200)
@@ -62,6 +63,7 @@ class GetRunSectionRequest(EncryptedRequest):
 
 class InsertRunSectionRequest(JsonInsertRequest):
     def __init__(self, json_val, run_id: int, offset: int):
+        json_val = deepcopy(json_val)
         if isinstance(json_val, str):
             with open(json_val) as f:
                 super().__init__(dict(json.load(f)), 'JYAC_HYT.dbo.Yd_CdPb_Section', {"pbid": run_id}, ('id',),
@@ -95,6 +97,7 @@ class DeleteLocationRequest(DeleteRequest):
 
 class InsertLocationRequest(JsonInsertRequest):
     def __init__(self, json_val, user_id: float, offset: int):
+        json_val = deepcopy(json_val)
         table_name = f'[WDHL_USER_LSGJ].[dbo].HIS_USER_{int(user_id)}'
         if isinstance(json_val, str):
             with open(json_val) as f:
