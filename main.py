@@ -178,14 +178,14 @@ while True:
             with open(f"data/{target_phone}/run_section/{target_record['id']}.json") as f:
                 sections = list(json.load(f))
                 for s_idx, section in enumerate(sections):
-                    pbar.set_description(f'写入跑步区段数据{s_idx}/{len(sections)}')
+                    pbar.set_description(f'写入跑步区段数据{s_idx + 1}/{len(sections)}')
                     InsertRunSectionRequest(dict(section), run_req.data_id(), timestamp_offset).send()
             with open(f"data/{target_phone}/run_location/{target_record['id']}.json") as f:
                 locations = list(json.load(f))
                 for l_idx, location in enumerate(locations):
                     fail_cnt = 0
                     try:
-                        pbar.set_description(f'写入位置关键点数据{l_idx}/{len(locations)}')
+                        pbar.set_description(f'写入位置关键点数据{l_idx + 1}/{len(locations)}')
                         InsertLocationRequest(dict(location), user_id, timestamp_offset).send()
                     except UnparsableRequestException:
                         fail_cnt += 1
