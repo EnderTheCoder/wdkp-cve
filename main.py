@@ -12,6 +12,7 @@ import random
 
 from tqdm import tqdm
 
+import util
 from request import UnparsableRequestException
 from util import sql_time_to_timestamp
 from user_request import UserInfoRequest
@@ -178,6 +179,8 @@ while True:
             with open(f"data/{target_phone}/run_section/{target_record['id']}.json") as f:
                 sections = list(json.load(f))
                 for s_idx, section in enumerate(sections):
+                    if s_idx == len(sections) - 1:
+                        section['rtime'] = util.offset_time(section['rtime'], random.randrange(0, 60 * 5))
                     pbar.set_description(f'写入跑步区段数据{s_idx + 1}/{len(sections)}')
                     InsertRunSectionRequest(dict(section), run_req.data_id(), timestamp_offset).send()
             with open(f"data/{target_phone}/run_location/{target_record['id']}.json") as f:
@@ -195,29 +198,6 @@ while True:
                             break
             if flag_random_time_tail:
                 target_time_tail = ''
-        # fail_cnt = 0
-        # pbar = tqdm(req_list)
-        # for req in pbar:
-        #     s = ''
-        #     if isinstance(req, InsertRunRequest):
-        #         s = '写入跑步数据'
-        #     if isinstance(req, InsertRunSectionRequest):
-        #         s = '写入跑步区段数据'
-        #     if isinstance(req, InsertLocationRequest):
-        #         s = '写入位置关键点数据'
-        #     pbar.set_description(s)
-        #     try:
-        #         req.send()
-        #
-        #     except UnparsableRequestException:
-        #         if isinstance(req, InsertRunRequest) or isinstance(req, InsertRunSectionRequest):
-        #             print('致命错误：写入跑步数据或跑步区段数据失败')
-        #             break
-        #         fail_cnt += 1
-        #         print('警告：一项位置关键点数据写入失败')
-        #         if fail_cnt >= 5:
-        #             print('致命错误：失败超过5次，终止写入')
-        #             break
     if option == 4:
         phone_serial = input("输入手机序列号：")
     if option == 5:
