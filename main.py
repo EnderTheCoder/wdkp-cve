@@ -9,6 +9,8 @@
 import json
 import os.path
 import random
+import time
+from datetime import datetime
 
 from tqdm import tqdm
 
@@ -162,7 +164,9 @@ while True:
             dup = 1
         else:
             dup = int(dup)
-
+        if int(target_time_head[:4]) != datetime.now().year:
+            print("致命错误：目标日期和当前的年份不一致，终止程序以阻止高风险行为")
+            continue
         pbar = tqdm(range(dup))
         for run_idx in pbar:
             flag_random_time_tail = False
@@ -171,6 +175,9 @@ while True:
                 target_time_tail = f'08:{random.randrange(0, 30)}:{random.randrange(0, 59)}'
             target_time_full = target_time_head+' ' + target_time_tail
             target_timestamp = sql_time_to_timestamp(target_time_full) + run_idx * 24 * 60 * 60
+            if target_timestamp > time.time() :
+                print("致命错误：目标日期在未来，终止程序以阻止高风险行为")
+                break
             base_timestamp = sql_time_to_timestamp(target_record['qssj'])
             timestamp_offset = target_timestamp - base_timestamp
             pbar.set_description('写入跑步数据')
