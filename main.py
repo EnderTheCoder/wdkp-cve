@@ -173,9 +173,9 @@ while True:
             if target_time_tail == '':
                 flag_random_time_tail = True
                 target_time_tail = f'08:{random.randrange(0, 30)}:{random.randrange(0, 59)}'
-            target_time_full = target_time_head+' ' + target_time_tail
+            target_time_full = target_time_head + ' ' + target_time_tail
             target_timestamp = sql_time_to_timestamp(target_time_full) + run_idx * 24 * 60 * 60
-            if target_timestamp > time.time() :
+            if target_timestamp > time.time():
                 print("致命错误：目标日期在未来，终止程序以阻止高风险行为")
                 break
             base_timestamp = sql_time_to_timestamp(target_record['qssj'])
