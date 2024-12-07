@@ -73,6 +73,7 @@ while True:
     print("\t3. 插入数据")
     print("\t4. 设置手机序列号")
     print("\t5. 设置APP版本")
+    print("\t6. 快速参数设定")
     print("\t0. 退出")
     option = int(input("输入选项："))
     if option == 1:
@@ -209,6 +210,13 @@ while True:
         phone_serial = input("输入手机序列号：")
     if option == 5:
         app_version = input("输入app版本号（苹果手机的型号包含在版本号中，示例：iPhone15,4|17.4.1|1.71）：")
+    if option == 6:
+        if len(run_records) == 0:
+            print('警告：用户不存在任何已有的跑步记录，无法根据已有记录设定参数')
+            continue
+        record = run_records[-1]
+        phone_serial = record['phoneno']
+        app_version = record['version']
     if option == 0:
         print('主程序退出')
         exit(0)
