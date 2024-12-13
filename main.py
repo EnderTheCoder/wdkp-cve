@@ -273,9 +273,9 @@ try:
             if phone_serial is not None:
                 target_record['phoneno'] = phone_serial
             target_timestamp = sql_time_to_timestamp(target_time_full)
+            input('按下回车键启动【这是最后的确认】')
             if target_timestamp > time.time():
                 if input("警告：目标日期在未来，高风险行为，是否继续[y/N]") == 'y':
-                    input('按下回车键启动【这是最后的确认】')
                     pass
                 else:
                     continue
@@ -299,14 +299,14 @@ try:
                         InsertLocationRequest(dict(location), user_id, timestamp_offset).send()
                     except UnparsableRequestException:
                         fail_cnt += 1
-                        print('警告：一项位置关键点数据写入失败')
+                        print(f'警告：一项位置关键点数据写入失败，失败次数[{fail_cnt}/5]')
                         if fail_cnt >= 5:
                             print('错误：失败超过5次，终止写入')
                             break
             pass
         if option == 0:
             print('主程序退出')
-            exit(0)
+            break
 except Exception as e:
     print(e)
     input('致命错误：程序终止，按任意键继续...')
