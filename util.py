@@ -31,3 +31,7 @@ def sql_time_to_timestamp(sql_time: str):
 
 def offset_time(sql_time: str, _offset_timestamp: int):
     return datetime.fromtimestamp(sql_time_to_timestamp(sql_time) + _offset_timestamp).strftime(time_format)
+
+def timestamp_to_sql_time(timestamp: int):
+    datetime_obj = datetime.fromtimestamp(timestamp)
+    return datetime_obj.strftime(time_format)
