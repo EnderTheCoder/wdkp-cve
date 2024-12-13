@@ -275,7 +275,7 @@ try:
             target_timestamp = sql_time_to_timestamp(target_time_full)
             if target_timestamp > time.time():
                 if input("警告：目标日期在未来，高风险行为，是否继续[y/N]") == 'y':
-                    input('按下回车键发射启动')
+                    input('按下回车键启动【这是最后的确认】')
                     pass
                 else:
                     continue
@@ -286,14 +286,14 @@ try:
             print('写入跑步数据成功')
             with open(f"data/{target_phone}/run_section/{target_record['id']}.json") as f:
                 sections = list(json.load(f))
-                for s_idx, section in enumerate(tqdm(sections), '写入区段数据'):
+                for s_idx, section in enumerate(tqdm(sections, '写入区段数据')):
                     if s_idx == len(sections) - 1:
                         section['rtime'] = util.offset_time(section['rtime'], random.randrange(0, 60 * 5))
 
                     InsertRunSectionRequest(dict(section), run_req.data_id(), timestamp_offset).send()
             with open(f"data/{target_phone}/run_location/{target_record['id']}.json") as f:
                 locations = list(json.load(f))
-                for l_idx, location in enumerate(tqdm(locations), '写入位置关键点'):
+                for l_idx, location in enumerate(tqdm(locations, '写入位置关键点')):
                     fail_cnt = 0
                     try:
                         InsertLocationRequest(dict(location), user_id, timestamp_offset).send()
